@@ -1,0 +1,865 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Books_bookreview {
+  id               Int      @id @default(autoincrement())
+  book_title       String   @db.VarChar(255)
+  book_author      String   @db.VarChar(255)
+  ISBN             String   @db.VarChar(15)
+  cover            String   @db.VarChar(100)
+  category         String   @db.VarChar(100)
+  book_keywords    String   @db.VarChar(255)
+  review_author_id Int
+  review_pullquote String   @db.VarChar(255)
+  review_text      String   @db.LongText
+  slug             String   @db.VarChar(255)
+  added            DateTime @db.Date
+  changed          DateTime @db.Date
+
+  @@index([book_title], map: "book_title")
+}
+
+model FrontEnd_gallery {
+  id                Int       @id @default(autoincrement())
+  title             String    @db.VarChar(255)
+  heading           String    @db.VarChar(512)
+  author            String    @db.VarChar(255)
+  body              String    @db.Text
+  keywords          String    @db.Text
+  slug              String    @db.VarChar(255)
+  date_added        DateTime? @db.Date
+  added             DateTime  @db.Date
+  date_last_changed DateTime? @db.Date
+  changed           DateTime  @db.Date
+
+  @@index([slug], map: "FrontEnd_gallery_56ae2a2a")
+}
+
+model FrontEnd_gallery_images {
+  id         Int @id @default(autoincrement())
+  gallery_id Int
+  image_id   Int
+
+  @@unique([gallery_id, image_id], map: "gallery_id")
+  @@index([gallery_id], map: "FrontEnd_gallery_images_34838cc3")
+  @@index([image_id], map: "FrontEnd_gallery_images_6682136")
+}
+
+model FrontEnd_galleryimagemap {
+  id         Int @id @default(autoincrement())
+  gallery_id Int
+  image_id   Int
+  ordering   Int @db.UnsignedInt
+}
+
+model Polls_choice {
+  id      Int    @id @default(autoincrement())
+  poll_id Int
+  choice  String @db.VarChar(200)
+
+  @@index([poll_id], map: "poll_id_refs_id_257f55d")
+}
+
+model Polls_poll {
+  id            Int      @id @default(autoincrement())
+  blurb         String   @db.LongText
+  question      String   @db.VarChar(200)
+  hashtag       String   @db.VarChar(20)
+  other_allowed Boolean
+  pub_date      DateTime @db.DateTime(0)
+  expiry_date   DateTime @db.Date
+  slug          String?  @db.VarChar(50)
+
+  @@index([slug])
+}
+
+model Polls_vote {
+  id         Int      @id @default(autoincrement())
+  email      String   @db.VarChar(75)
+  choice_id  Int
+  other      String   @db.VarChar(200)
+  ip_address String   @db.Char(15)
+  timestamp  DateTime @db.DateTime(0)
+  poll_id    Int?
+
+  @@index([poll_id])
+  @@index([choice_id], map: "choice_id_refs_id_9103cf4")
+}
+
+model TV_channel {
+  xmltv_channel String      @id @db.VarChar(255)
+  channel_name  String      @db.VarChar(255)
+  freeview      Boolean
+  TV_tvfilm     TV_tvfilm[]
+}
+
+model TV_tvfilm {
+  id                       Int                        @id @default(autoincrement())
+  time_showing             DateTime                   @db.DateTime(0)
+  film_id                  Int
+  tv_channel_id            String                     @db.VarChar(255)
+  TV_channel               TV_channel                 @relation(fields: [tv_channel_id], references: [xmltv_channel], onUpdate: Restrict, map: "tv_channel_id_refs_xmltv_channel_34050a89f3598175")
+  TV_weekstvfilms_tv_films TV_weekstvfilms_tv_films[]
+
+  @@index([tv_channel_id], map: "TV_tvfilm_71334c7d")
+}
+
+model TV_weekstvfilms {
+  id                       Int                        @id @default(autoincrement())
+  title                    String                     @db.VarChar(255)
+  author                   String                     @db.VarChar(255)
+  image_id                 Int
+  blurb                    String                     @db.LongText
+  date                     DateTime                   @db.Date
+  slug                     String                     @db.VarChar(255)
+  TV_weekstvfilms_tv_films TV_weekstvfilms_tv_films[]
+}
+
+model TV_weekstvfilms_tv_films {
+  id              Int             @id @default(autoincrement())
+  weekstvfilms_id Int
+  tvfilm_id       Int
+  TV_tvfilm       TV_tvfilm       @relation(fields: [tvfilm_id], references: [id], onUpdate: Restrict, map: "tvfilm_id_refs_id_e86e7c01")
+  TV_weekstvfilms TV_weekstvfilms @relation(fields: [weekstvfilms_id], references: [id], onUpdate: Restrict, map: "weekstvfilms_id_refs_id_1f94de64")
+
+  @@unique([weekstvfilms_id, tvfilm_id], map: "weekstvfilms_id")
+  @@index([weekstvfilms_id], map: "TV_weekstvfilms_tv_films_256b36fd")
+  @@index([tvfilm_id], map: "TV_weekstvfilms_tv_films_bf243748")
+}
+
+model auth_group {
+  id   Int    @id @default(autoincrement())
+  name String @unique(map: "name") @db.VarChar(150)
+}
+
+model auth_group_permissions {
+  id            Int @id @default(autoincrement())
+  group_id      Int
+  permission_id Int
+
+  @@unique([group_id, permission_id], map: "group_id")
+  @@index([permission_id], map: "auth_group_permissions_1e014c8f")
+  @@index([group_id], map: "auth_group_permissions_425ae3c4")
+}
+
+model auth_message {
+  id      Int    @id @default(autoincrement())
+  user_id Int
+  message String @db.LongText
+
+  @@index([user_id], map: "auth_message_403f60f")
+}
+
+model auth_permission {
+  id              Int    @id @default(autoincrement())
+  name            String @db.VarChar(50)
+  content_type_id Int
+  codename        String @db.VarChar(100)
+
+  @@unique([content_type_id, codename], map: "content_type_id")
+  @@index([content_type_id], map: "auth_permission_1bb8f392")
+}
+
+model auth_user {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique(map: "username") @db.VarChar(30)
+  first_name   String   @db.VarChar(150)
+  last_name    String   @db.VarChar(30)
+  email        String   @db.VarChar(75)
+  password     String   @db.VarChar(128)
+  is_staff     Boolean
+  is_active    Boolean
+  is_superuser Boolean
+  last_login   DateTime @db.DateTime(0)
+  date_joined  DateTime @db.DateTime(0)
+}
+
+model auth_user_groups {
+  id       Int @id @default(autoincrement())
+  user_id  Int
+  group_id Int
+
+  @@unique([user_id, group_id], map: "user_id")
+  @@index([user_id], map: "auth_user_groups_403f60f")
+  @@index([group_id], map: "auth_user_groups_425ae3c4")
+}
+
+model auth_user_user_permissions {
+  id            Int @id @default(autoincrement())
+  user_id       Int
+  permission_id Int
+
+  @@unique([user_id, permission_id], map: "user_id")
+  @@index([permission_id], map: "auth_user_user_permissions_1e014c8f")
+  @@index([user_id], map: "auth_user_user_permissions_403f60f")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model brick_count {
+  brick_id Int
+  count    Int
+
+  @@index([brick_id], map: "brick_id")
+  @@ignore
+}
+
+model bricks {
+  id             Int      @id @default(autoincrement())
+  advertiser_id  Int      @default(0)
+  image          String   @db.VarChar(255)
+  url            String   @db.VarChar(255)
+  priority       Int      @default(0)
+  who            String   @db.VarChar(255)
+  birth_date     DateTime @db.Date
+  expiry_date    DateTime @db.Date
+  mouseover_text String   @db.Text
+
+  @@index([advertiser_id], map: "advertiser_id")
+  @@index([priority], map: "priority")
+}
+
+model comp_description {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  film_id     String   @db.VarChar(255)
+  compname    String   @db.VarChar(255)
+  question    String   @db.VarChar(255)
+  answer      String   @db.VarChar(255)
+  filename    String   @db.VarChar(255)
+  blurb       String   @db.Text
+  birth_date  DateTime @db.Date
+  expiry_date DateTime @db.Date
+  comp_prize  String   @db.VarChar(255)
+
+  @@index([film_id], map: "film_id")
+}
+
+model comps {
+  id      Int      @id @default(autoincrement())
+  desc_id Int
+  email   String   @default("") @db.VarChar(50)
+  answer  String?  @db.VarChar(255)
+  time    DateTime @default(now()) @db.Timestamp(0)
+  winner  Boolean  @default(false)
+
+  @@index([answer], map: "answer")
+  @@index([desc_id], map: "desc_id")
+  @@index([email], map: "email")
+  @@index([winner], map: "winner")
+}
+
+model core_film {
+  id                                        Int          @id @default(autoincrement()) @db.UnsignedInt
+  title                                     String       @default("") @db.VarChar(255)
+  certificate                               String       @default("") @db.Char(3)
+  made                                      String       @default("") @db.VarChar(255)
+  runtime                                   Int          @default(0) @db.UnsignedInt
+  language                                  String       @default("") @db.VarChar(255)
+  director                                  String       @default("") @db.VarChar(3000)
+  writer                                    String       @default("") @db.VarChar(255)
+  stars                                     String       @db.VarChar(1000)
+  keywords                                  String       @db.Text
+  date_added                                DateTime?    @db.Date
+  date_last_changed                         DateTime?    @db.Date
+  alternative_titles                        String       @default("") @db.VarChar(255)
+  one_liner                                 String       @db.VarChar(1000)
+  year                                      Int?
+  country                                   String       @db.VarChar(100)
+  uk_release                                DateTime?    @db.Date
+  us_release                                DateTime?    @db.Date
+  azplace                                   String       @default("") @db.VarChar(255)
+  asin                                      String       @default("") @db.VarChar(20)
+  features                                  String       @db.VarChar(255)
+  recommended                               String       @db.VarChar(255)
+  default_review_id                         Int?
+  official_site                             String       @db.VarChar(255)
+  trailer_link                              String       @db.VarChar(1000)
+  synopsis                                  String       @db.Text
+  full_synopsis                             String       @db.Text
+  canonoical_title                          String?      @db.VarChar(255)
+  forum_link                                Int?
+  mainshot                                  String       @db.VarChar(255)
+  copyshot                                  String       @db.VarChar(255)
+  postershot                                String       @db.VarChar(255)
+  imdb                                      Boolean
+  full_shot_id                              Int?
+  dvd_review                                dvd_review[]
+  io_review                                 io_review[]
+  recommends_recommends_film_id1Tocore_film recommends[] @relation("recommends_film_id1Tocore_film") @ignore
+  recommends_recommends_film_id2Tocore_film recommends[] @relation("recommends_film_id2Tocore_film") @ignore
+
+  @@index([asin], map: "asin")
+  @@index([azplace], map: "azplace")
+  @@index([azplace, id], map: "azplace_id")
+  @@index([canonoical_title], map: "canonoical_title")
+  @@index([director(length: 255)], map: "director_index")
+  @@index([forum_link], map: "forum_link")
+  @@index([language], map: "language_index")
+  @@index([one_liner(length: 255)], map: "one_liner_index")
+  @@index([stars(length: 255)], map: "stars")
+  @@index([title], map: "title_index")
+  @@index([uk_release], map: "uk_release")
+  @@index([us_release], map: "us_release")
+  @@index([writer], map: "writer_index")
+}
+
+model django_admin_log {
+  id              Int      @id @default(autoincrement())
+  action_time     DateTime @db.DateTime(0)
+  user_id         Int
+  content_type_id Int?
+  object_id       String?  @db.LongText
+  object_repr     String   @db.VarChar(200)
+  action_flag     Int      @db.UnsignedSmallInt
+  change_message  String   @db.LongText
+
+  @@index([content_type_id], map: "django_admin_log_1bb8f392")
+  @@index([user_id], map: "django_admin_log_403f60f")
+}
+
+model django_content_type {
+  id        Int    @id @default(autoincrement())
+  name      String @default("") @db.VarChar(100)
+  app_label String @db.VarChar(100)
+  model     String @db.VarChar(100)
+
+  @@unique([app_label, model], map: "app_label")
+}
+
+model django_migrations {
+  id      Int      @id @default(autoincrement())
+  app     String   @db.VarChar(255)
+  name    String   @db.VarChar(255)
+  applied DateTime @db.DateTime(6)
+}
+
+model django_redirect {
+  id       Int    @id @default(autoincrement())
+  site_id  Int
+  old_path String @db.VarChar(200)
+  new_path String @db.VarChar(200)
+
+  @@unique([site_id, old_path], map: "site_id")
+}
+
+model django_session {
+  session_key  String   @id @db.VarChar(40)
+  session_data String   @db.LongText
+  expire_date  DateTime @db.DateTime(0)
+}
+
+model django_site {
+  id     Int    @id @default(autoincrement())
+  domain String @db.VarChar(100)
+  name   String @db.VarChar(50)
+}
+
+model dvd_review {
+  id                Int                  @id @default(autoincrement()) @db.UnsignedInt
+  film_id           Int                  @default(0) @db.UnsignedInt
+  reviewer          String               @db.VarChar(255)
+  product_code      String               @default("") @db.VarChar(20)
+  region            String               @db.Char(2)
+  ratio             String               @default("") @db.VarChar(255)
+  sound             String               @default("") @db.VarChar(255)
+  extras            String               @db.Text
+  review            String               @db.Text
+  date_added        DateTime?            @db.Date
+  date_last_changed DateTime?            @db.Date
+  rating            Float?
+  edition           String               @default("") @db.VarChar(255)
+  dvd_display       Boolean              @default(true)
+  disc_type         dvd_review_disc_type
+  packshot          String               @db.VarChar(255)
+  slug              String               @db.VarChar(255)
+  core_film         core_film            @relation(fields: [film_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "film_ck")
+
+  @@index([dvd_display], map: "dvd_display")
+  @@index([film_id], map: "film_id")
+  @@index([rating], map: "rating")
+  @@index([slug], map: "slug")
+}
+
+model feature {
+  id            Int       @id @default(autoincrement())
+  author        String    @default("") @db.VarChar(255)
+  title         String    @default("") @db.VarChar(255)
+  heading       String    @db.Text
+  subheading    String    @db.Text
+  body          String    @db.Text
+  added         DateTime  @default(now()) @db.DateTime(0)
+  changed       DateTime? @default(dbgenerated("('0000-00-00 00:00:00')")) @db.DateTime(0)
+  film_ids      String?   @db.Text
+  image         String    @default("") @db.VarChar(255)
+  image_caption String?   @db.Text
+  keywords      String?   @db.Text
+  category      String?   @db.VarChar(255)
+  slug          String    @db.VarChar(255)
+
+  @@index([author], map: "author")
+  @@index([category], map: "category")
+  @@index([keywords(length: 200)], map: "keywords")
+  @@index([slug], map: "slug")
+  @@index([title], map: "title")
+}
+
+model festival {
+  fest_id            Int               @id @default(autoincrement())
+  info_id            Int
+  film_id            Int?
+  one_liner          String            @db.VarChar(70)
+  instance_blurb     String            @db.Text
+  caption            String            @db.VarChar(255)
+  date_begins        DateTime          @db.Date
+  date_ends          DateTime?         @db.Date
+  hashtag            String            @db.VarChar(70)
+  keywords           String            @db.Text
+  page_picture       String            @db.VarChar(255)
+  trailer_embed_code String            @db.Text
+  festival_info      festival_info     @relation(fields: [info_id], references: [information_id], onDelete: Cascade, onUpdate: Restrict, map: "festival_ibfk_1")
+  festival_strand    festival_strand[]
+
+  @@index([date_begins], map: "date_begins")
+  @@index([date_ends], map: "date_ends")
+  @@index([film_id], map: "film_id")
+  @@index([info_id], map: "info_id")
+}
+
+model festival_homepage {
+  id      Int    @id @default(autoincrement())
+  text    String @db.Text
+  film_id Int?
+  caption String @db.VarChar(255)
+  image   String @db.VarChar(100)
+}
+
+model festival_info {
+  information_id Int                     @id @default(autoincrement())
+  name           String                  @db.VarChar(255)
+  acronym        String                  @db.VarChar(20)
+  directory      String                  @db.VarChar(255)
+  logo_image     String                  @db.VarChar(255)
+  place          String                  @db.VarChar(255)
+  frequency      festival_info_frequency
+  blurb          String                  @db.Text
+  touring        Boolean
+  country        String                  @db.VarChar(255)
+  website        String                  @db.VarChar(255)
+  visible        Boolean                 @default(true)
+  festival       festival[]
+
+  @@index([name], map: "name")
+}
+
+model festival_short_programme {
+  id        Int    @id @default(autoincrement())
+  strand_id Int
+  name      String @db.VarChar(255)
+  comments  String @db.Text
+
+  @@index([strand_id], map: "strand_id")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model festival_short_programme_films {
+  programme_id Int
+  film_id      Int
+
+  @@index([programme_id, film_id], map: "programme_id")
+  @@ignore
+}
+
+model festival_strand {
+  id                    Int                     @id @default(autoincrement())
+  festival_id           Int
+  strand_name           String                  @db.VarChar(255)
+  strand_comments       String                  @db.Text
+  clumped               Boolean                 @default(false)
+  slug                  String                  @db.VarChar(255)
+  festival              festival                @relation(fields: [festival_id], references: [fest_id], onDelete: Cascade, onUpdate: Restrict, map: "festival_strand_ibfk_1")
+  festival_strand_films festival_strand_films[]
+
+  @@index([festival_id], map: "festival_id")
+  @@index([slug], map: "slug")
+  @@index([strand_name], map: "strand_name")
+}
+
+model festival_strand_films {
+  strand_id       Int
+  film_id         Int
+  comments        String          @db.VarChar(255)
+  id              Int             @id @default(autoincrement())
+  festival_strand festival_strand @relation(fields: [strand_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "festival_strand_films_ibfk_1")
+
+  @@index([film_id], map: "film_id")
+  @@index([strand_id], map: "strand_id")
+}
+
+model homepage_news {
+  id               Int                @id @default(autoincrement()) @db.UnsignedInt
+  features         String             @db.VarChar(255)
+  news             String             @db.VarChar(255)
+  image            String             @db.VarChar(255)
+  alttag           String             @db.VarChar(255)
+  feature_id       Int
+  type             homepage_news_type
+  festival         String             @db.Text
+  festival_graphic String             @db.VarChar(500)
+  festival_link    String             @db.VarChar(500)
+  interact         String             @db.Text
+  interact_graphic String             @db.VarChar(500)
+  interact_link    String             @db.VarChar(500)
+  lowertable_name  String             @db.VarChar(255)
+  updated          DateTime?          @db.DateTime(0)
+
+  @@index([lowertable_name], map: "lowertable_name")
+}
+
+model homepage_news_feature_keys {
+  id                   Int @id @default(autoincrement())
+  homepagenewsblock_id Int
+  feature_id           Int
+
+  @@unique([homepagenewsblock_id, feature_id], map: "homepagenewsblock_id")
+}
+
+model homepage_news_news_keys {
+  id                   Int @id @default(autoincrement())
+  homepagenewsblock_id Int
+  newsstory_id         Int
+
+  @@unique([homepagenewsblock_id, newsstory_id], map: "homepagenewsblock_id")
+}
+
+model image {
+  id                Int       @id @default(autoincrement())
+  image             String    @db.VarChar(100)
+  title             String    @unique(map: "title") @db.VarChar(255)
+  caption           String    @db.Text
+  credit            String    @db.VarChar(255)
+  keywords          String    @db.VarChar(255)
+  date_added        DateTime? @db.Date
+  date_last_changed DateTime? @db.Date
+}
+
+model io_review {
+  id                 Int       @id @default(autoincrement()) @db.UnsignedInt
+  film_id            Int       @default(0) @db.UnsignedInt
+  reviewer           String    @default("") @db.VarChar(255)
+  review             String    @db.Text
+  rating             Float
+  date_added         DateTime? @db.Date
+  date_last_changed  DateTime? @db.Date
+  pullquote          String    @db.VarChar(512)
+  slug               String    @db.VarChar(255)
+  streaming_date     DateTime? @db.Date
+  streaming_homepage Boolean
+  streaming_service  String    @db.VarChar(255)
+  core_film          core_film @relation(fields: [film_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "io_review_ibfk_1")
+
+  @@index([film_id], map: "film_id")
+  @@index([rating], map: "rating")
+  @@index([reviewer], map: "reviewer")
+  @@index([slug], map: "slug")
+  @@index([streaming_homepage], map: "streaming_homepage")
+}
+
+model issuetracker_ticket {
+  id             Int      @id @default(autoincrement())
+  title          String   @db.VarChar(100)
+  project        String   @db.VarChar(100)
+  submitted_date DateTime @db.Date
+  modified_date  DateTime @db.Date
+  submitter_id   Int
+  assigned_to_id Int
+  description    String   @db.LongText
+  status         Int
+  priority       Int
+}
+
+model names {
+  id         Int    @id @default(autoincrement())
+  film_id    Int    @default(0)
+  name       String @default("") @db.VarChar(255)
+  word_count Int    @default(0)
+  type       String @default("") @db.VarChar(10)
+  md5_hash   String @unique(map: "md5_hash") @default("") @db.VarChar(32)
+
+  @@index([name], map: "name")
+  @@index([type], map: "type")
+}
+
+model news {
+  id           Int       @id @default(autoincrement())
+  title        String    @db.VarChar(512)
+  heading      String    @db.Text
+  body         String    @db.Text
+  added        DateTime  @db.DateTime(0)
+  changed      DateTime? @db.DateTime(0)
+  author       String    @db.VarChar(512)
+  keywords     String    @db.VarChar(255)
+  process_body Boolean
+  slug         String    @db.VarChar(255)
+
+  @@index([added, changed], map: "added")
+  @@index([author(length: 255)], map: "author")
+  @@index([slug], map: "slug")
+  @@index([title(length: 255)], map: "title")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model newsletter {
+  title    String? @db.Text
+  textitem String? @db.Text
+  htmlitem String? @db.Text
+
+  @@ignore
+}
+
+model newsletter_copy {
+  id             Int      @id @default(autoincrement())
+  subject        String   @db.VarChar(255)
+  header_title   String   @db.Text
+  caption        String   @db.Text
+  copy           String   @db.Text
+  plaintext_copy String   @db.Text
+  picture_url    String   @db.VarChar(255)
+  news           String   @db.VarChar(255)
+  features       String   @db.VarChar(255)
+  date_added     DateTime @db.Date
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model recommends {
+  film_id1                                 Int       @db.UnsignedInt
+  film_id2                                 Int       @db.UnsignedInt
+  core_film_recommends_film_id1Tocore_film core_film @relation("recommends_film_id1Tocore_film", fields: [film_id1], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "recommends_ibfk_1")
+  core_film_recommends_film_id2Tocore_film core_film @relation("recommends_film_id2Tocore_film", fields: [film_id2], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "recommends_ibfk_2")
+
+  @@index([film_id1], map: "film_id1")
+  @@index([film_id2], map: "film_id2")
+  @@ignore
+}
+
+model registration {
+  first_name    String               @default("") @db.VarChar(20)
+  last_name     String               @default("") @db.VarChar(30)
+  email         String               @id @default("") @db.VarChar(50)
+  country       registration_country @default(AF)
+  age           registration_age     @default(Under_18)
+  sex           registration_sex     @default(M)
+  interests     String?
+  comments      String?              @db.VarChar(255)
+  time          DateTime             @default(now()) @db.Timestamp(0)
+  last_comp_win DateTime             @default(dbgenerated("('0000-00-00')")) @db.Date
+}
+
+model shop_data {
+  id           Int                    @id @default(autoincrement())
+  film_id      Int
+  shop         shop_data_shop         @default(Amazon)
+  GUID         String                 @db.VarChar(255)
+  product_type shop_data_product_type @default(DVD)
+  product_name String                 @db.VarChar(255)
+  gfx_url      String                 @db.VarChar(255)
+  time         DateTime               @default(now()) @db.Timestamp(0)
+
+  @@index([GUID], map: "GUID")
+  @@index([film_id, shop], map: "film_id")
+}
+
+model survey_answers {
+  id              Int    @id @default(autoincrement())
+  questions_id    Int
+  answers         String @db.Text
+  email           String @db.VarChar(255)
+  country         String @db.VarChar(255)
+  like_more_of    String @db.Text
+  like_or_dislike String @db.Text
+  user_agent      String @db.VarChar(255)
+
+  @@index([country], map: "country")
+  @@index([email], map: "email")
+  @@index([questions_id], map: "questions_id")
+}
+
+model survey_questions {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @unique(map: "date") @db.Date
+  prizes    String   @db.VarChar(255)
+  blurb     String   @db.Text
+  questions String   @db.Text
+  drawn     Boolean
+  winner    String   @db.VarChar(255)
+}
+
+model test_registration {
+  id    Int    @id @default(autoincrement())
+  email String @default("") @db.VarChar(100)
+
+  @@index([email], map: "email")
+}
+
+model trailers {
+  id              Int             @id @default(autoincrement())
+  film_id         Int?
+  our_title       String          @db.VarChar(255)
+  URL             String          @db.VarChar(255)
+  format          trailers_format
+  size            trailers_size
+  play_trailer_id Int?
+  title           String?         @db.VarChar(255)
+  year            Int?
+
+  @@index([film_id], map: "film_id")
+}
+
+model tv_movies {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  film_id   Int?
+  title     String   @db.VarChar(255)
+  year      Int
+  channel   String   @db.VarChar(50)
+  starttime DateTime @db.DateTime(0)
+  endtime   DateTime @db.DateTime(0)
+
+  @@index([channel], map: "channel")
+  @@index([film_id], map: "film_id")
+  @@index([starttime], map: "starttime")
+}
+
+model tweets {
+  id           Int      @id @default(autoincrement())
+  last_fetched DateTime @unique(map: "last_fetched") @db.DateTime(0)
+  tweets       String   @db.Text
+}
+
+model week_blurb {
+  id                Int             @id @default(autoincrement())
+  text              String          @db.Text
+  type              week_blurb_type
+  secondary_heading String          @db.VarChar(255)
+  secondary_text    String          @db.Text
+  timestamp         DateTime        @default(now()) @db.Timestamp(0)
+
+  @@index([type], map: "type")
+}
+
+model writers {
+  id        Int     @id @default(autoincrement()) @db.UnsignedInt
+  name      String  @unique(map: "name") @db.VarChar(100)
+  email     String  @db.VarChar(100)
+  biography String  @db.Text
+  image     String  @db.MediumText
+  can_email Boolean
+  likes     String  @db.Text
+  dislikes  String  @db.Text
+  notes     String  @db.Text
+  pseudonym String  @db.VarChar(255)
+  location  String  @db.VarChar(255)
+  website   String  @db.VarChar(255)
+  slug      String  @db.VarChar(255)
+
+  @@index([email], map: "email")
+  @@index([slug], map: "slug")
+}
+
+enum shop_data_shop {
+  Amazon
+}
+
+enum week_blurb_type {
+  uk
+  us
+}
+
+enum registration_country {
+  AF
+  AU
+  AT
+  BE
+  CA
+  CB
+  CN
+  DK
+  FI
+  FR
+  DE
+  GR
+  IC
+  IN
+  ID
+  IE
+  IT
+  JP
+  MX
+  ME
+  NL
+  NZ
+  NO
+  PK
+  PH
+  PL
+  PT
+  RU
+  SA
+  ES
+  LK
+  SE
+  UK
+  US
+  OTHER
+}
+
+enum registration_age {
+  Under_18 @map("Under 18")
+  // 18-26 @map("18-26")
+  // 27-40 @map("27-40")
+  Over_40  @map("Over 40")
+}
+
+enum trailers_format {
+  flash
+  quicktime
+  windowsmedia
+  realplayer
+}
+
+enum shop_data_product_type {
+  DVD
+}
+
+enum registration_sex {
+  M
+  F
+}
+
+enum trailers_size {
+  small
+  medium
+  large
+  highdef
+}
+
+enum homepage_news_type {
+  news
+  feature
+}
+
+enum festival_info_frequency {
+  weekly
+  monthly
+  annually
+  one_off
+}
+
+enum dvd_review_disc_type {
+  DVD
+  Blu_Ray @map("Blu-Ray")
+  HD_DVD  @map("HD-DVD")
+}
