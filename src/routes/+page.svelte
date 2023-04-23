@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-
 	import Counter from '../components/Counter.svelte';
+	import DvdHomepage from '../components/DVDHomepage.svelte';
 	import Weekblurb from '../components/Weekblurb.svelte';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 </script>
@@ -12,17 +12,24 @@
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
-<Weekblurb weekblurb={data.feed} week_films={data.weeksfilms} />
+<section>
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+		<Weekblurb weekblurb={data.week_blurb} week_films={data.weeksfilms} />
+		<DvdHomepage dvd_releases={data.dvd_releases} />
+		<div>
+			<h2 class="text-2xl text-bold">TWITTER</h2>
+			<img class="w-full" src="https://via.placeholder.com/300x200" alt="placeholder" />
+		</div>
+		<div>
+			<h2 class="text-2xl text-bold">{@html data.week_blurb.secondary_heading}</h2>
+			{@html data.week_blurb.secondary_text}
+		</div>
+	</div>
+</section>
+
 <section>
 	<Counter />
 </section>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
 </style>
