@@ -254,44 +254,45 @@ model comps {
 }
 
 model core_film {
-  id                                        Int          @id @default(autoincrement()) @db.UnsignedInt
-  title                                     String       @default("") @db.VarChar(255)
-  certificate                               String       @default("") @db.Char(3)
-  made                                      String       @default("") @db.VarChar(255)
-  runtime                                   Int          @default(0) @db.UnsignedInt
-  language                                  String       @default("") @db.VarChar(255)
-  director                                  String       @default("") @db.VarChar(3000)
-  writer                                    String       @default("") @db.VarChar(255)
-  stars                                     String       @db.VarChar(1000)
-  keywords                                  String       @db.Text
-  date_added                                DateTime?    @db.Date
-  date_last_changed                         DateTime?    @db.Date
-  alternative_titles                        String       @default("") @db.VarChar(255)
-  one_liner                                 String       @db.VarChar(1000)
+  id                                        Int                     @id @default(autoincrement()) @db.UnsignedInt
+  title                                     String                  @default("") @db.VarChar(255)
+  certificate                               String                  @default("") @db.Char(3)
+  made                                      String                  @default("") @db.VarChar(255)
+  runtime                                   Int                     @default(0) @db.UnsignedInt
+  language                                  String                  @default("") @db.VarChar(255)
+  director                                  String                  @default("") @db.VarChar(3000)
+  writer                                    String                  @default("") @db.VarChar(255)
+  stars                                     String                  @db.VarChar(1000)
+  keywords                                  String                  @db.Text
+  date_added                                DateTime?               @db.Date
+  date_last_changed                         DateTime?               @db.Date
+  alternative_titles                        String                  @default("") @db.VarChar(255)
+  one_liner                                 String                  @db.VarChar(1000)
   year                                      Int?
-  country                                   String       @db.VarChar(100)
-  uk_release                                DateTime?    @db.Date
-  us_release                                DateTime?    @db.Date
-  azplace                                   String       @default("") @db.VarChar(255)
-  asin                                      String       @default("") @db.VarChar(20)
-  features                                  String       @db.VarChar(255)
-  recommended                               String       @db.VarChar(255)
+  country                                   String                  @db.VarChar(100)
+  uk_release                                DateTime?               @db.Date
+  us_release                                DateTime?               @db.Date
+  azplace                                   String                  @default("") @db.VarChar(255)
+  asin                                      String                  @default("") @db.VarChar(20)
+  features                                  String                  @db.VarChar(255)
+  recommended                               String                  @db.VarChar(255)
   default_review_id                         Int?
-  official_site                             String       @db.VarChar(255)
-  trailer_link                              String       @db.VarChar(1000)
-  synopsis                                  String       @db.Text
-  full_synopsis                             String       @db.Text
-  canonoical_title                          String?      @db.VarChar(255)
+  official_site                             String                  @db.VarChar(255)
+  trailer_link                              String                  @db.VarChar(1000)
+  synopsis                                  String                  @db.Text
+  full_synopsis                             String                  @db.Text
+  canonoical_title                          String?                 @db.VarChar(255)
   forum_link                                Int?
-  mainshot                                  String       @db.VarChar(255)
-  copyshot                                  String       @db.VarChar(255)
-  postershot                                String       @db.VarChar(255)
+  mainshot                                  String                  @db.VarChar(255)
+  copyshot                                  String                  @db.VarChar(255)
+  postershot                                String                  @db.VarChar(255)
   imdb                                      Boolean
   full_shot_id                              Int?
   dvd_review                                dvd_review[]
   io_review                                 io_review[]
-  recommends_recommends_film_id1Tocore_film recommends[] @relation("recommends_film_id1Tocore_film") @ignore
-  recommends_recommends_film_id2Tocore_film recommends[] @relation("recommends_film_id2Tocore_film") @ignore
+  recommends_recommends_film_id1Tocore_film recommends[]            @relation("recommends_film_id1Tocore_film") @ignore
+  recommends_recommends_film_id2Tocore_film recommends[]            @relation("recommends_film_id2Tocore_film") @ignore
+  festival_strand_films                     festival_strand_films[]
 
   @@index([asin], map: "asin")
   @@index([azplace], map: "azplace")
@@ -494,6 +495,7 @@ model festival_strand_films {
   film_id         Int
   comments        String          @db.VarChar(255)
   id              Int             @id @default(autoincrement())
+  film            core_film       @relation(fields: [film_id], references: [id])
   festival_strand festival_strand @relation(fields: [strand_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "festival_strand_films_ibfk_1")
 
   @@index([film_id], map: "film_id")

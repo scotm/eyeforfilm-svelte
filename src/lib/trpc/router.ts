@@ -9,9 +9,8 @@ export const t = initTRPC.context<Context>().create({
 });
 
 export const router = t.router({
-	get_review_from_slug: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
-		console.log(input);
-		return await ctx.prisma.io_review.findFirstOrThrow({
+	get_dvd_review_from_slug: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
+		return await ctx.prisma.dvd_review.findFirstOrThrow({
 			where: {
 				slug: input
 			},
@@ -19,6 +18,33 @@ export const router = t.router({
 				core_film: true
 			}
 		});
+	}),
+	get_review_from_slug: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
+		const review = await ctx.prisma.io_review.findFirstOrThrow({
+			where: {
+				slug: input
+			},
+			include: {
+				core_film: true
+			}
+		});
+		const festivals = await ctx.prisma.festival.findMany({
+			where: {
+				festival_strand: {
+					some: {
+						festival_strand_films: {
+							some: {
+								film_id: review.core_film.id
+							}
+						}
+					}
+				}
+			},
+			include: {
+				festival_info: true
+			}
+		});
+		return { review, festivals };
 	}),
 	get_week_blurb: t.procedure.query(async ({ ctx }) => {
 		const week_blurb = await ctx.prisma.week_blurb.findFirstOrThrow({

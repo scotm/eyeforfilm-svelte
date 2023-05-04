@@ -1,40 +1,54 @@
 <script lang="ts">
+	import Bbfc from '../../../components/BBFC.svelte';
+	import Rating from '../../../components/Rating.svelte';
 	import { cleanHTML } from '../../../utils/cleanHTML';
-	import { convertBBFCRating } from '../../../utils/film';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+	const review = data.review;
+	const film = data.review.core_film;
+	const festivals = data.festivals.map((festival) => {
+		return {
+			name: festival.festival_info.acronym
+				? festival.festival_info.acronym
+				: festival.festival_info.name,
+			year: festival.date_begins.getFullYear()
+		};
+	});
 </script>
 
 <div class="grid grid-cols-3">
 	<div class="col-span-3">
-		<h1>{data.core_film.title}</h1>
-		<h2>{data.rating}</h2>
-		<p>Reviewed by {data.reviewer}</p>
+		<h1 class="text-4xl m-2">{film.title}</h1>
+		<Rating rating={review.rating} />
+		<p>Reviewed by <b>{review.reviewer}</b></p>
 	</div>
 
-	<div class="col-span-2">
-		{@html cleanHTML(data.review)}
+	<div class="col-span-2 mr-2">
+		{@html cleanHTML(review.review)}
 	</div>
-	<div class="col-span-1">
+	<div class="col-span-1 m-2">
 		<div class="float-left mr-2 mb-2">
-			<img src={'https://www.eyeforfilm.co.uk/images/' + data.core_film.postershot} alt="" />
+			<img src={'https://www.eyeforfilm.co.uk/images/' + film.postershot} alt="" />
 		</div>
-		<p>{data.core_film.one_liner}</p>
-		<hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-		{#if data.core_film.director}
-			<p>Director: {data.core_film.director}</p>
+		<p class="m-2">{film.one_liner}</p>
+		<hr class="h-px mt-4 mb-2 bg-gray-200 border-0 dark:bg-gray-700 clear-both" />
+		{#if film.director}
+			<p class="m-2">Director: {film.director}</p>
 		{/if}
-		{#if data.core_film.writer}
-			<p>Writer: {data.core_film.writer}</p>
+		{#if film.writer}
+			<p class="m-2">Writer: {film.writer}</p>
 		{/if}
-		<p>Starring: {data.core_film.stars}</p>
-		<p>Year: {data.core_film.year}</p>
-		<p>Runtime: {data.core_film.runtime} minutes</p>
-		{#if data.core_film.certificate}
-			<p>BBFC: {convertBBFCRating(data.core_film.certificate)}</p>
+		<p class="m-2">Starring: {film.stars}</p>
+		<p class="m-2">Year: {film.year}</p>
+		<p class="m-2">Runtime: {film.runtime} minutes</p>
+		{#if film.certificate}
+			<p class="m-2">BBFC: <Bbfc certificate={film.certificate} /></p>
 		{/if}
-		<p>Country: {data.core_film.country}</p>
-		<!-- <p>Festivals: {data.core_film.festivals}</p> -->
+		<p class="m-2">Country: {film.country}</p>
+
+		<p class="m-2">
+			Festivals: {festivals.map((festival) => `${festival.name} ${festival.year}`).join(', ')}
+		</p>
 	</div>
 </div>
