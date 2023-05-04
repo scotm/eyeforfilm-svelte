@@ -2,14 +2,23 @@ import type { Context } from '$lib/trpc/context';
 import { initTRPC } from '@trpc/server';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
+import { z } from 'zod';
 
 export const t = initTRPC.context<Context>().create({
 	transformer: superjson
 });
 
 export const router = t.router({
-	greeting: t.procedure.query(async () => {
-		return `Hello tRPC v10 @ ${new Date().toLocaleTimeString()}`;
+	get_review_from_slug: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
+		console.log(input);
+		return await ctx.prisma.io_review.findFirstOrThrow({
+			where: {
+				slug: input
+			},
+			include: {
+				core_film: true
+			}
+		});
 	}),
 	get_week_blurb: t.procedure.query(async ({ ctx }) => {
 		const week_blurb = await ctx.prisma.week_blurb.findFirstOrThrow({

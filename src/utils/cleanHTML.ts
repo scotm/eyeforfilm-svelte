@@ -45,6 +45,7 @@ export function cleanHTML(text: string) {
 	text = text.replaceAll('&', '&amp;');
 
 	text = regex_apply(text, regexes);
+	text = regex_apply(text, [[/\n?(.+?)\n\s*\n/g, '<p class="my-2">$1</p>\n\n']]);
 	return text;
 }
 

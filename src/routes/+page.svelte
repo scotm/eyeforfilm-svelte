@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Counter from '../components/Counter.svelte';
 	import DvdHomepage from '../components/DVDHomepage.svelte';
 	import Weekblurb from '../components/Weekblurb.svelte';
 	import type { PageData } from './$types';
@@ -22,14 +21,9 @@
 		</div>
 		<div>
 			<h2 class="text-2xl text-bold">{@html data.week_blurb.secondary_heading}</h2>
-			{@html data.week_blurb.secondary_text}
+			<!-- {@html data.week_blurb.secondary_text} -->
 		</div>
 	</div>
 </section>
 
-<section>
-	<Counter />
-</section>
-
-<style>
-</style>
+<style></style>

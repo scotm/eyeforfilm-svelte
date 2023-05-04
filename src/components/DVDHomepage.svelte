@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { RouterOutputs } from '$lib/trpc/router';
-
 	export let dvd_releases: RouterOutputs['get_week_blurb']['dvd_releases'];
 </script>
 
