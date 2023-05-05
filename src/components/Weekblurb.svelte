@@ -10,7 +10,7 @@
 <div>
 	<h2 class="text-2xl text-bold">FILMS OUT THIS WEEK</h2>
 	{#if picked_film}
-		<div class="float-right ml-2 mb-2">
+		<div class="float-right ml-2 mb-2 w-32">
 			<img
 				style="width:95px"
 				src={'https://www.eyeforfilm.co.uk/images/' + picked_film.postershot}
