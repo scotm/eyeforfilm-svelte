@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { cleanHTML } from '../utils/cleanHTML';
 	import type { RouterOutputs } from '$lib/trpc/router';
-	export let weekblurb: RouterOutputs['get_week_blurb']['week_blurb'];
-	export let week_films: RouterOutputs['get_week_blurb']['weeksfilms'];
+	export let weekblurb: RouterOutputs['homepage_data']['week_blurb'];
+	export let week_films: RouterOutputs['homepage_data']['weeksfilms'];
 	const films_with_posters = week_films.filter((film) => film.postershot !== '');
 	const picked_film = films_with_posters[Math.floor(Math.random() * films_with_posters.length)];
 </script>

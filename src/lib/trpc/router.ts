@@ -46,7 +46,7 @@ export const router = t.router({
 		});
 		return { review, festivals };
 	}),
-	get_week_blurb: t.procedure.query(async ({ ctx }) => {
+	homepage_data: t.procedure.query(async ({ ctx }) => {
 		const week_blurb = await ctx.prisma.week_blurb.findFirstOrThrow({
 			take: 1,
 			orderBy: {
