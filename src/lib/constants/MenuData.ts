@@ -1,6 +1,5 @@
 import type { Menu } from "$lib/types/HeaderMenu";
 
-
 export const menuData: Menu[] = [
   {
     title: "Film",
