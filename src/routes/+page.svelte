@@ -1,6 +1,7 @@
 <script lang="ts">
 	import DvdHomepage from '../components/Homepage/DVDHomepage.svelte';
-	import Weekblurb from '../components/Weekblurb.svelte';
+  import Mastodon from '../components/Homepage/Mastodon.svelte';
+	import Weekblurb from '../components/Homepage/Weekblurb.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -16,12 +17,13 @@
 		<Weekblurb weekblurb={data.week_blurb} week_films={data.weeksfilms} />
 		<DvdHomepage dvd_releases={data.dvd_releases} />
 		<div>
-			<h2 class="text-2xl text-bold">TWITTER</h2>
-			<img class="w-full" src="https://via.placeholder.com/300x200" alt="placeholder" />
+			<h2 class="text-2xl text-bold uppercase">Mastodon</h2>
+			<Mastodon />
+			<!-- <img class="w-full" src="https://via.placeholder.com/300x200" alt="placeholder" /> -->
 		</div>
 		<div>
-			<h2 class="text-2xl text-bold">{@html data.week_blurb.secondary_heading}</h2>
-			<!-- {@html data.week_blurb.secondary_text} -->
+			<h2 class="text-2xl text-bold uppercase">{@html data.week_blurb.secondary_heading}</h2>
+			{@html data.week_blurb.secondary_text}
 		</div>
 	</div>
 </section>

@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -307,6 +308,8 @@ model core_film {
   @@index([uk_release], map: "uk_release")
   @@index([us_release], map: "us_release")
   @@index([writer], map: "writer_index")
+  @@fulltext([title])
+  @@fulltext([alternative_titles])
 }
 
 model django_admin_log {

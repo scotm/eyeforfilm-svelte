@@ -1,5 +1,7 @@
 <script lang="ts">
-	import Bbfc from '../../../components/BBFC.svelte';
+  import FilmInfo from '../../../components/FilmInfo.svelte';
+
+	
 	import Rating from '../../../components/Rating.svelte';
 	import { cleanHTML } from '../../../utils/cleanHTML';
 	import type { PageData } from './$types';
@@ -28,27 +30,11 @@
 		{@html cleanHTML(review.review)}
 	</div>
 	<div class="col-span-1 m-2">
-		<div class="float-left mr-2 mb-2">
+		<div class="float-left mr-2 mb-4">
 			<img src={'https://www.eyeforfilm.co.uk/images/' + film.postershot} alt="" />
 		</div>
 		<p class="m-2">{film.one_liner}</p>
-		<hr class="h-px mt-4 mb-2 bg-gray-200 border-0 dark:bg-gray-700 clear-both" />
-		{#if film.director}
-			<p class="m-2">Director: {film.director}</p>
-		{/if}
-		{#if film.writer}
-			<p class="m-2">Writer: {film.writer}</p>
-		{/if}
-		<p class="m-2">Starring: {film.stars}</p>
-		<p class="m-2">Year: {film.year}</p>
-		<p class="m-2">Runtime: {film.runtime} minutes</p>
-		{#if film.certificate}
-			<p class="m-2">BBFC: <Bbfc certificate={film.certificate} /></p>
-		{/if}
-		<p class="m-2">Country: {film.country}</p>
-
-		<p class="m-2">
-			Festivals: {festivals.map((festival) => `${festival.name} ${festival.year}`).join(', ')}
-		</p>
+		<hr class="h-px my-2 mb-2 bg-gray-200 border-0 dark:bg-gray-700 clear-both" />
+		<FilmInfo {film} {festivals} />
 	</div>
 </div>

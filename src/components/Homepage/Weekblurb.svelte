@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cleanHTML } from '../utils/cleanHTML';
+	import { cleanHTML } from '../../utils/cleanHTML';
 	import type { RouterOutputs } from '$lib/trpc/router';
 	export let weekblurb: RouterOutputs['homepage_data']['week_blurb'];
 	export let week_films: RouterOutputs['homepage_data']['weeksfilms'];

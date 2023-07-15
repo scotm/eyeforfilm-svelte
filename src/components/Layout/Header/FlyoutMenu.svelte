@@ -1,49 +1,7 @@
 <script lang='ts'>
-    type Menu = {
-        title: string;
-        links: Link[]
-        bottomLinks?: Link[]
-    }
-    type Link = {
-        title: string;
-        url: string;
-        description: string;
-        icon?: string;
-    };
-    let menuData:Menu = {
-        title:'Film',
-        links: [{
-            title:'Out Now',
-            url:'/outnow',
-            description: 'The latest releases, with reviews',
-        },
-        {
-          title:'Coming Soon',
-          url:'/comingsoon',
-          description: 'Upcoming releases, with reviews',
-        },
-        {
-          title:'Out Now - US',
-          url:'/outnowus',
-          description: 'The latest releases in the US',
-        },
-        {
-          title: 'Coming Soon - US',
-          url: '/comingsoonus',
-          description: 'Upcoming releases in the US',
-        },
-        {
-          title: 'Festivals',
-          url: '/festivalhomepage',
-          description: 'The latest festival releases',
-        },
-        {
-          title: 'Archive',
-          url: '/filmreviewarchive',
-          description: 'Browse our archive of reviews',
-        }
-      ]
-    }
+    import type { Menu } from "$lib/types/HeaderMenu";
+
+    export let menuData:Menu
 	  let showMenu = false;
 </script>
 
@@ -71,7 +29,13 @@
       {#each menuData.links as link}
       <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50">
         <div class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-            Icon
+            {#if link.icon}
+              <img class="h-6 w-6" src={link.icon} alt="">
+            {:else}
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            {/if}
         </div>
         <div class="flex-auto">
           <a href="{link.url}" class="block font-semibold text-gray-900">
