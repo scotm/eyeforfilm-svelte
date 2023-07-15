@@ -46,6 +46,40 @@ export const router = t.router({
 		});
 		return { review, festivals };
 	}),
+	search_film_reviews_by_title: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
+		const films = await ctx.prisma.core_film.findMany({
+			where: {
+				OR: [
+					{
+						title: input
+					}
+				]
+				// io_review: {
+				// 	some: {
+				// 		slug: {
+				// 			not: null
+				// 		}
+				// 	}
+				// }
+			},
+			include: {
+				io_review: {
+					select: {
+						slug: true
+					}
+				}
+			}
+		});
+		return films;
+	}),
+	get_lowertable_data: t.procedure.query(async ({ ctx }) => {
+		return await ctx.prisma.homepage_news.findFirstOrThrow({
+			take: 1,
+			orderBy: {
+				id: 'desc'
+			}
+		});
+	}),
 	homepage_data: t.procedure.query(async ({ ctx }) => {
 		const week_blurb = await ctx.prisma.week_blurb.findFirstOrThrow({
 			take: 1,
@@ -62,11 +96,16 @@ export const router = t.router({
 					// 7 days ago
 					gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
 					lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-				},
-				// We only want to return films that have reviews
-				io_review: {
-					some: {}
 				}
+				// We only want to return films that have reviews
+				// io_review: {
+				// 	some: {
+				// 		// We only want to return reviews that have a slug
+				// 		slug: {
+				// 			not: null
+				// 		}
+				// 	}
+				// }
 			}
 		});
 		const dvd_releases = await ctx.prisma.dvd_review.findMany({

@@ -254,45 +254,45 @@ model comps {
 }
 
 model core_film {
-  id                                        Int                     @id @default(autoincrement()) @db.UnsignedInt
-  title                                     String                  @default("") @db.VarChar(255)
-  certificate                               String                  @default("") @db.Char(3)
-  made                                      String                  @default("") @db.VarChar(255)
-  runtime                                   Int                     @default(0) @db.UnsignedInt
-  language                                  String                  @default("") @db.VarChar(255)
-  director                                  String                  @default("") @db.VarChar(3000)
-  writer                                    String                  @default("") @db.VarChar(255)
-  stars                                     String                  @db.VarChar(1000)
-  keywords                                  String                  @db.Text
-  date_added                                DateTime?               @db.Date
-  date_last_changed                         DateTime?               @db.Date
-  alternative_titles                        String                  @default("") @db.VarChar(255)
-  one_liner                                 String                  @db.VarChar(1000)
-  year                                      Int?
-  country                                   String                  @db.VarChar(100)
-  uk_release                                DateTime?               @db.Date
-  us_release                                DateTime?               @db.Date
-  azplace                                   String                  @default("") @db.VarChar(255)
-  asin                                      String                  @default("") @db.VarChar(20)
-  features                                  String                  @db.VarChar(255)
-  recommended                               String                  @db.VarChar(255)
-  default_review_id                         Int?
-  official_site                             String                  @db.VarChar(255)
-  trailer_link                              String                  @db.VarChar(1000)
-  synopsis                                  String                  @db.Text
-  full_synopsis                             String                  @db.Text
-  canonoical_title                          String?                 @db.VarChar(255)
-  forum_link                                Int?
-  mainshot                                  String                  @db.VarChar(255)
-  copyshot                                  String                  @db.VarChar(255)
-  postershot                                String                  @db.VarChar(255)
-  imdb                                      Boolean
-  full_shot_id                              Int?
-  dvd_review                                dvd_review[]
-  io_review                                 io_review[]
-  recommends_recommends_film_id1Tocore_film recommends[]            @relation("recommends_film_id1Tocore_film") @ignore
-  recommends_recommends_film_id2Tocore_film recommends[]            @relation("recommends_film_id2Tocore_film") @ignore
-  festival_strand_films                     festival_strand_films[]
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  title                 String                  @default("") @db.VarChar(255)
+  certificate           String                  @default("") @db.Char(3)
+  made                  String                  @default("") @db.VarChar(255)
+  runtime               Int                     @default(0) @db.UnsignedInt
+  language              String                  @default("") @db.VarChar(255)
+  director              String                  @default("") @db.VarChar(3000)
+  writer                String                  @default("") @db.VarChar(255)
+  stars                 String                  @db.VarChar(1000)
+  keywords              String                  @db.Text
+  date_added            DateTime?               @db.Date
+  date_last_changed     DateTime?               @db.Date
+  alternative_titles    String                  @default("") @db.VarChar(255)
+  one_liner             String                  @db.VarChar(1000)
+  year                  Int?
+  country               String                  @db.VarChar(100)
+  uk_release            DateTime?               @db.Date
+  us_release            DateTime?               @db.Date
+  azplace               String                  @default("") @db.VarChar(255)
+  asin                  String                  @default("") @db.VarChar(20)
+  features              String                  @db.VarChar(255)
+  recommended           String                  @db.VarChar(255)
+  default_review_id     Int?
+  official_site         String                  @db.VarChar(255)
+  trailer_link          String                  @db.VarChar(1000)
+  synopsis              String                  @db.Text
+  full_synopsis         String                  @db.Text
+  canonoical_title      String?                 @db.VarChar(255)
+  forum_link            Int?
+  mainshot              String                  @db.VarChar(255)
+  copyshot              String                  @db.VarChar(255)
+  postershot            String                  @db.VarChar(255)
+  imdb                  Boolean
+  full_shot_id          Int?
+  dvd_review            dvd_review[]
+  io_review             io_review[]
+  recommendedTo         recommends[]            @relation("recommends_film_id1Tocore_film")
+  recommendedFrom       recommends[]            @relation("recommends_film_id2Tocore_film")
+  festival_strand_films festival_strand_films[]
 
   @@index([asin], map: "asin")
   @@index([azplace], map: "azplace")
@@ -636,16 +636,15 @@ model newsletter_copy {
   date_added     DateTime @db.Date
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model recommends {
-  film_id1                                 Int       @db.UnsignedInt
-  film_id2                                 Int       @db.UnsignedInt
-  core_film_recommends_film_id1Tocore_film core_film @relation("recommends_film_id1Tocore_film", fields: [film_id1], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "recommends_ibfk_1")
-  core_film_recommends_film_id2Tocore_film core_film @relation("recommends_film_id2Tocore_film", fields: [film_id2], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "recommends_ibfk_2")
+  id       Int       @id @default(autoincrement())
+  film_id1 Int       @db.UnsignedInt
+  film_id2 Int       @db.UnsignedInt
+  film1    core_film @relation("recommends_film_id1Tocore_film", fields: [film_id1], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "recommends_ibfk_1")
+  film2    core_film @relation("recommends_film_id2Tocore_film", fields: [film_id2], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "recommends_ibfk_2")
 
   @@index([film_id1], map: "film_id1")
   @@index([film_id2], map: "film_id2")
-  @@ignore
 }
 
 model registration {
@@ -819,10 +818,10 @@ enum registration_country {
 }
 
 enum registration_age {
-  Under_18 @map("Under 18")
-  // 18-26 @map("18-26")
-  // 27-40 @map("27-40")
-  Over_40  @map("Over 40")
+  Under_18      @map("Under 18")
+  Between_18_26 @map("18-26")
+  Between_27_40 @map("27-40")
+  Over_40       @map("Over 40")
 }
 
 enum trailers_format {

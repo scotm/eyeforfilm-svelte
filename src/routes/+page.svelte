@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DvdHomepage from '../components/DVDHomepage.svelte';
+	import DvdHomepage from '../components/Homepage/DVDHomepage.svelte';
 	import Weekblurb from '../components/Weekblurb.svelte';
 	import type { PageData } from './$types';
 
